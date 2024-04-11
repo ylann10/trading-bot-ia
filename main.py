@@ -28,19 +28,33 @@ if exists(MODEL):
     model = models.load_model(MODEL)
 else:
     counter = 0
-    min_loss = None
+    backup = None
+    lastest, min_loss = None, None
     stats = getStats(DATA_LIMIT)
     entree = np.array(stats['x'], dtype=float)
     sortie = np.array(stats['y'], dtype=float)
     model.compile(optimizer='adam', loss='mean_squared_error')
     while True:
-        history = model.fit(x=entree, y=sortie, epochs=1, verbose=0)
-        counter += 1
-        if not min_loss or history.history['loss'][0] < min_loss:
-            min_loss = history.history['loss'][0]
-        print(f"Epochs: {counter}; Min: {min_loss}; Cur: {history.history['loss'][0]};")
-        if history.history['loss'][0] <= MAX_LOSS or (MAX_EPOCHS and counter >= MAX_EPOCHS):
-            break
+        try:
+            history = model.fit(x=entree, y=sortie, epochs=1, verbose=0)
+            counter += 1
+            if not min_loss or history.history['loss'][0] < min_loss:
+                min_loss = history.history['loss'][0]
+                latest = counter
+                backup = model
+            if counter % 10 == 0:
+                logs = f"Epochs: {counter};"
+                logs += f" Min: {min_loss};"
+                logs += f" Latest: {counter - latest};"
+                logs += f" Cur: {history.history['loss'][0]};"
+                print(logs)
+            if history.history['loss'][0] <= MAX_LOSS or (MAX_EPOCHS and counter >= MAX_EPOCHS):
+                break
+        except KeyboardInterrupt:
+            if backup:
+                model = backup
+            model.save(MODEL)
+            exit(0)
     model.save(MODEL)
 
 x = np.array(getStats(1, True), dtype=float)
