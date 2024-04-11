@@ -1,2 +1,3 @@
 venv
 model.keras
+__pycache__
