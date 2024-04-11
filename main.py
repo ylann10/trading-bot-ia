@@ -27,6 +27,7 @@ if exists(MODEL):
     model = models.load_model(MODEL)
 else:
     counter = 0
+    min_loss = None
     stats = getStats(DATA_LIMIT)
     entree = np.array(stats['x'], dtype=float)
     sortie = np.array(stats['y'], dtype=float)
@@ -34,7 +35,9 @@ else:
     while True:
         history = model.fit(x=entree, y=sortie, epochs=1, verbose=0)
         counter += 1
-        print(f"Epochs: {counter}; Loss: {history.history['loss'][0]}")
+        if not min_loss or history.history['loss'][0] < min_loss:
+            min_loss = history.history['loss'][0]
+        print(f"Epochs: {counter}; Min: {min_loss}; Cur: {history.history['loss'][0]};")
         if history.history['loss'][0] <= MAX_LOSS or (MAX_EPOCHS and counter >= MAX_EPOCHS):
             break
     model.save(MODEL)
