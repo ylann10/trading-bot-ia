@@ -18,9 +18,10 @@ MAX_LOSS = 0.01
 
 model = Sequential()
 model.add(layers.Dense(units=1, input_shape=(6,)))
-model.add(layers.Dense(units=256))
-model.add(layers.Dense(units=256))
-model.add(layers.Dense(units=256))
+model.add(layers.Dense(units=64))
+model.add(layers.Dense(units=64))
+model.add(layers.Dense(units=64))
+model.add(layers.Dense(units=64))
 model.add(layers.Dense(units=1))
 
 if exists(MODEL):
