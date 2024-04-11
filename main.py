@@ -1,12 +1,8 @@
 #!/usr/bin/python3
 
 from environment import *
-from keras.callbacks import EarlyStopping
 from os.path import exists
 from stats import getStats
-from pprint import pprint
-from time import sleep
-from os import system
 from sys import exit
 from keras import *
 import numpy as np
